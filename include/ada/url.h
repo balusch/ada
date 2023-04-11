@@ -99,7 +99,7 @@ struct url : url_base {
   inline void update_base_search(std::string_view input);
   /** @private */
   inline void update_base_search(std::string_view input,
-                                 const uint8_t query_percent_encode_set[]);
+                                 const charset &uquery_percent_encode_set);
   /** @private */
   inline void update_base_search(std::optional<std::string> input);
   /** @private */

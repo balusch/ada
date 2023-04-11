@@ -209,7 +209,7 @@ inline void url_aggregator::update_base_search(std::string_view input) {
 }
 
 inline void url_aggregator::update_base_search(
-    std::string_view input, const uint8_t query_percent_encode_set[]) {
+    std::string_view input, const charset &query_percent_encode_set) {
   ada_log("url_aggregator::update_base_search ", input,
           " with encoding parameter ", to_string(), "\n", to_diagram());
   ADA_ASSERT_TRUE(validate());

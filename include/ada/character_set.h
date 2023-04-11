@@ -6,6 +6,8 @@
 
 // clang-format off
 
+namespace ada {
+
 namespace detail {
 template<class T, class = void>
 struct is_pred : std::false_type {};
@@ -352,5 +354,7 @@ public:
         );
     }
 };
+
+} // namespace ada
 
 // clang-format on

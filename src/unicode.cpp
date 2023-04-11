@@ -314,11 +314,8 @@ std::string percent_decode(const std::string_view input, size_t first_percent) {
 }
 
 std::string percent_encode(const std::string_view input,
-                           const uint8_t character_set[]) {
-  auto pointer =
-      std::find_if(input.begin(), input.end(), [character_set](const char c) {
-        return character_sets::bit_at(character_set, c);
-      });
+                           const charset &cs) {
+  auto pointer = std::find_if(input.begin(), input.end(), cs);
   // Optimization: Don't iterate if percent encode is not required
   if (pointer == input.end()) {
     return std::string(input);
@@ -329,7 +326,7 @@ std::string percent_encode(const std::string_view input,
                                    // produce 3 characters.
 
   for (; pointer != input.end(); pointer++) {
-    if (character_sets::bit_at(character_set, *pointer)) {
+    if (cs(*pointer)) {
       result.append(character_sets::hex + uint8_t(*pointer) * 4, 3);
     } else {
       result += *pointer;
@@ -340,14 +337,10 @@ std::string percent_encode(const std::string_view input,
 }
 
 template <bool append>
-bool percent_encode(const std::string_view input, const uint8_t character_set[],
-                    std::string& out) {
+bool percent_encode(const std::string_view input, const charset &cs, std::string& out) {
   ada_log("percent_encode ", input, " to output string while ",
           append ? "appending" : "overwriting");
-  auto pointer =
-      std::find_if(input.begin(), input.end(), [character_set](const char c) {
-        return character_sets::bit_at(character_set, c);
-      });
+  auto pointer = std::find_if(input.begin(), input.end(), cs);
   ada_log("percent_encode done checking, moved to ",
           std::distance(input.begin(), pointer));
 
@@ -365,7 +358,7 @@ bool percent_encode(const std::string_view input, const uint8_t character_set[],
   ada_log("percent_encode processing ", std::distance(pointer, input.end()),
           " bytes");
   for (; pointer != input.end(); pointer++) {
-    if (character_sets::bit_at(character_set, *pointer)) {
+    if (cs(*pointer)) {
       out.append(character_sets::hex + uint8_t(*pointer) * 4, 3);
     } else {
       out += *pointer;
@@ -392,12 +385,12 @@ bool to_ascii(std::optional<std::string>& out, const std::string_view plain,
 }
 
 std::string percent_encode(const std::string_view input,
-                           const uint8_t character_set[], size_t index) {
+                           const charset &cs, size_t index) {
   std::string out;
   out.append(input.data(), index);
   auto pointer = input.begin() + index;
   for (; pointer != input.end(); pointer++) {
-    if (character_sets::bit_at(character_set, *pointer)) {
+    if (cs(*pointer)) {
       out.append(character_sets::hex + uint8_t(*pointer) * 4, 3);
     } else {
       out += *pointer;

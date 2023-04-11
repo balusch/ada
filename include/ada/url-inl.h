@@ -122,7 +122,7 @@ inline void url::update_unencoded_base_hash(std::string_view input) {
 }
 
 inline void url::update_base_search(std::string_view input,
-                                    const uint8_t query_percent_encode_set[]) {
+                                    const charset &query_percent_encode_set) {
   query = ada::unicode::percent_encode(input, query_percent_encode_set);
 }
 
